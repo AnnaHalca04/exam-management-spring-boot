@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ro" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Gestiune AWJ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light d-flex align-items-center" style="height: 100vh;">
+<div class="container text-center">
+    <h1 class="mb-4">Sistem Gestiune Activități Academice</h1>
+    <p class="lead mb-5">Te rugăm să alegi tipul de cont pentru autentificare:</p>
+
+    <div class="row justify-content-center">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100 p-4 border-primary">
+                <h3>Student</h3>
+                <p class="text-muted">Vizualizează proiecte, examene și gestionează statusul activităților.</p>
+                <a th:href="@{/login}" class="btn btn-primary btn-lg mt-auto">Sunt Student</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm h-100 p-4 border-dark">
+                <h3>Profesor</h3>
+                <p class="text-muted">Administrează materii, creează proiecte noi și adaugă examene.</p>
+                <a th:href="@{/login}" class="btn btn-dark btn-lg mt-auto">Sunt Profesor</a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

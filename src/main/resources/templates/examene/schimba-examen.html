@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ro" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Schimbă Examen - AWJ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Alege un nou interval pentru examen</h3>
+        </div>
+        <div class="card-body">
+            <p>Momentan ești programat la data de: <strong th:text="${examenActual.data + ' ora ' + examenActual.ora}"></strong></p>
+
+            <table class="table table-hover mt-4">
+                <thead class="table-dark">
+                <tr>
+                    <th>Data Nouă</th>
+                    <th>Ora</th>
+                    <th>Sala</th>
+                    <th>Acțiune</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="opt : ${optiuni}">
+                    <td th:text="${opt.data}">Data</td>
+                    <td th:text="${opt.ora}">Ora</td>
+                    <td th:text="${opt.sala.codSala}">Sala</td>
+                    <td>
+                        <form th:action="@{/examene/confirmă-schimbare}" method="post">
+                            <input type="hidden" name="idVechi" th:value="${examenActual.idExamen}">
+                            <input type="hidden" name="idNou" th:value="${opt.idExamen}">
+                            <button type="submit" class="btn btn-success btn-sm">Confirmă</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <a th:href="@{/dashboard}" class="btn btn-secondary">Anulează</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestiune Proiect | Portal Academic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card { border-radius: 15px; border: none; }
+        .error-msg { color: #dc3545; font-size: 0.85rem; margin-top: 4px; }
+        .progress { height: 30px; font-size: 1rem; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h3 class="mb-0" th:text="${proiect.idProiect == null} ? 'Adăugare Proiect Nou' : 'Editare Proiect'">Gestiune Proiect</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/proiecte/salveaza}" th:object="${proiect}" method="post">
+                        <input type="hidden" th:field="*{idProiect}" />
+
+                        <!-- Materia -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Materia Asociată</label>
+                            <select th:field="*{materie.idMaterie}" class="form-select" required>
+                                <option value="" disabled selected>Alege materia...</option>
+                                <option th:each="m : ${materii}" th:value="${m.idMaterie}" th:text="${m.nume}"></option>
+                            </select>
+                            <div th:if="${#fields.hasErrors('materie')}" th:errors="*{materie}" class="error-msg"></div>
+                        </div>
+
+                        <!-- Titlu -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Titlu Proiect</label>
+                            <input type="text" th:field="*{titlu}" class="form-control" placeholder="Introduceți titlul (min. 5 caractere)" required>
+                            <div th:if="${#fields.hasErrors('titlu')}" th:errors="*{titlu}" class="error-msg"></div>
+                        </div>
+
+                        <!-- Descriere -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Descriere Detaliată</label>
+                            <textarea th:field="*{descriere}" class="form-control" rows="3" placeholder="Introduceți descrierea (min. 10 caractere)" required></textarea>
+                            <div th:if="${#fields.hasErrors('descriere')}" th:errors="*{descriere}" class="error-msg"></div>
+                        </div>
+
+                        <!-- Cerințe -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Cerințe / Tehnologii</label>
+                            <textarea th:field="*{cerinte}" class="form-control" rows="2" placeholder="Ex: Java, Spring Boot, SQL Server"></textarea>
+                        </div>
+
+                        <!-- Row pentru Status și Progres -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Status Activitate</label>
+                                <select th:field="*{status}" class="form-select" required>
+                                    <option value="În desfășurare">În desfășurare</option>
+                                    <option value="Suspendată">Suspendată</option>
+                                    <option value="Reluată">Reluată</option>
+                                    <option value="Repetată">Repetată</option>
+                                    <option value="Finalizată">Finalizată</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Progres (%)</label>
+                                <input type="number" th:field="*{progres}" class="form-control" min="0" max="100" placeholder="0-100">
+                                <div th:if="${#fields.hasErrors('progres')}" th:errors="*{progres}" class="error-msg"></div>
+                            </div>
+                        </div>
+
+                        <!-- Indicatori Cheie (Opțional) -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Indicatori Cheie <small class="text-muted">(opțional)</small></label>
+                            <textarea th:field="*{indicatoriCheie}" class="form-control" rows="2"
+                                      placeholder="Ex: Cercetare bibliografică - Complet; Implementare cod - În progres; Testare - Neînceput"></textarea>
+                            <small class="text-muted">Introduceți fiecare indicator pe o linie nouă</small>
+                        </div>
+
+                        <!-- Deadline -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Data Limită (Deadline)</label>
+                            <input type="date" th:field="*{deadline}" class="form-control" required>
+                            <div th:if="${#fields.hasErrors('deadline')}" th:errors="*{deadline}" class="error-msg"></div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Salvează în Sistem</button>
+                            <a th:href="@{/dashboard}" class="btn btn-outline-secondary">Anulează și înapoi</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <p class="text-center text-muted mt-3 small">Toate câmpurile marcate sunt obligatorii.</p>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

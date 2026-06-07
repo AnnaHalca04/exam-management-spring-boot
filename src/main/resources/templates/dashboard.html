@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Academic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .card { border-radius: 12px; border: none; }
+        .table-hover tbody tr:hover { background-color: #f8f9fa; }
+        .progress { height: 20px; }
+        .badge-status { font-size: 0.85rem; padding: 0.35em 0.65em; }
+    </style>
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/dashboard}">Portal Academic</a>
+        <div class="navbar-nav ms-auto align-items-center">
+                <span class="text-white me-3">
+                    <i class="bi bi-person-circle"></i>
+                    <span th:text="${#authentication.name}">User</span>
+                </span>
+            <a th:href="@{/profil}" class="btn btn-outline-info btn-sm me-2">Profil</a>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger btn-sm">Ieșire</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Mesaje -->
+    <div th:if="${param.successInscriere}" class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle-fill"></i> Te-ai înscris cu succes la proiect!
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${param.alreadyEnrolled}" class="alert alert-warning alert-dismissible fade show">
+        <i class="bi bi-exclamation-triangle-fill"></i> Ești deja înscris la acest proiect.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- STATISTICI (BONUS pentru nota 10) -->
+    <div th:if="${isStudent}" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white text-center p-3">
+                <h2 class="mb-0" th:text="${#lists.size(proiecteInscrise)}">0</h2>
+                <small>Proiecte înscrise</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white text-center p-3">
+                <h2 class="mb-0" th:text="${#lists.size(proiecteUrgente)}">0</h2>
+                <small>Deadline &lt; 7 zile</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white text-center p-3">
+                <h2 class="mb-0" th:text="${#lists.size(examene)}">0</h2>
+                <small>Examene programate</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white text-center p-3">
+                <h2 class="mb-0" th:text="${progresTotal != null ? progresTotal + '%' : '0%'}">0%</h2>
+                <small>Progres mediu</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- PROIECTE -->
+        <div class="col-md-7">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-journal-code"></i> Proiecte Active</h5>
+                    <div>
+                        <!-- SORTARE (BONUS) -->
+                        <div class="btn-group me-2" role="group">
+                            <a th:href="@{/dashboard(sort='deadline')}" class="btn btn-light btn-sm" title="Sortează după deadline">
+                                <i class="bi bi-sort-down"></i>
+                            </a>
+                            <a th:href="@{/dashboard(sort='status')}" class="btn btn-light btn-sm" title="Sortează după status">
+                                <i class="bi bi-funnel"></i>
+                            </a>
+                        </div>
+                        <a sec:authorize="hasAuthority('PROFESOR')" th:href="@{/proiecte/nou}" class="btn btn-light btn-sm">
+                            + Adaugă
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Alert urgent -->
+                    <div th:if="${isStudent and not #lists.isEmpty(proiecteUrgente)}" class="alert alert-danger py-2 small">
+                        <i class="bi bi-alarm"></i> Atenție! Ai <strong th:text="${#lists.size(proiecteUrgente)}"></strong> proiect(e) urgente!
+                    </div>
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Titlu</th>
+                            <th>Status</th>
+                            <th>Progres</th>
+                            <th>Deadline</th>
+                            <th>Acțiune</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="p : ${proiecte}">
+                            <td th:text="${p.titlu}" class="fw-bold"></td>
+                            <td>
+                                        <span class="badge badge-status"
+                                              th:classappend="${p.status == 'Finalizată'} ? 'bg-success' :
+                                                             (${p.status == 'Suspendată'} ? 'bg-danger' :
+                                                             (${p.status == 'În desfășurare'} ? 'bg-primary' : 'bg-secondary'))"
+                                              th:text="${p.status}">
+                                        </span>
+                            </td>
+                            <td style="width: 150px;">
+                                <div class="progress">
+                                    <div class="progress-bar"
+                                         th:style="'width: ' + ${p.progres} + '%'"
+                                         th:classappend="${p.progres >= 75} ? 'bg-success' : (${p.progres >= 50} ? 'bg-info' : (${p.progres >= 25} ? 'bg-warning' : 'bg-danger'))"
+                                         th:text="${p.progres + '%'}">
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${#dates.format(p.deadline, 'dd.MM.yyyy')}"></td>
+                            <td>
+                                <!-- STUDENT -->
+                                <div th:if="${isStudent}">
+                                    <div th:if="${#lists.contains(proiecteInscrise, p.idProiect)}">
+                                        <button class="btn btn-secondary btn-sm" disabled>
+                                            <i class="bi bi-check-circle"></i> Înscris
+                                        </button>
+                                    </div>
+                                    <div th:unless="${#lists.contains(proiecteInscrise, p.idProiect)}">
+                                        <form th:action="@{/proiecte/inscriere/{id}(id=${p.idProiect})}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm">Înscrie-te</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- PROFESOR -->
+                                <div sec:authorize="hasAuthority('PROFESOR')" class="btn-group">
+                                    <a th:href="@{/proiecte/edit/{id}(id=${p.idProiect})}" class="btn btn-warning btn-sm">Edit</a>
+                                    <form th:action="@{/proiecte/delete/{id}(id=${p.idProiect})}" method="post"
+                                          th:onsubmit="return confirm('Ștergi proiectul?')" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Șterge</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXAMENE -->
+        <div class="col-md-5">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-calendar-check"></i> Examene</h5>
+                    <a sec:authorize="hasAuthority('PROFESOR')" th:href="@{/examene/nou}" class="btn btn-light btn-sm">+ Nou</a>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Materie</th>
+                            <th>Data</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="e : ${examene}">
+                            <td th:text="${e.materie != null ? e.materie.nume : 'N/A'}"></td>
+                            <td th:text="${#dates.format(e.data, 'dd.MM')}"></td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <a th:href="@{/examene/detalii/{id}(id=${e.idExamen})}" class="btn btn-outline-info btn-sm">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a sec:authorize="hasAuthority('PROFESOR')" th:href="@{/examene/edit/{id}(id=${e.idExamen})}" class="btn btn-outline-warning btn-sm">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form sec:authorize="hasAuthority('PROFESOR')" th:action="@{/examene/delete/{id}(id=${e.idExamen})}" method="post"
+                                          th:onsubmit="return confirm('Ștergi examenul?')" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

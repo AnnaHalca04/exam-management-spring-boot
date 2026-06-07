@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalii Examen | Portal Academic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .detail-card { border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .info-label { color: #6c757d; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+        .info-value { color: #212529; font-weight: 600; font-size: 1.2rem; }
+        .header-section { background: #4e73df; color: white; border-radius: 20px 20px 0 0; padding: 2rem; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card detail-card">
+                <div class="header-section text-center">
+                    <i class="bi bi-calendar-check mb-3" style="font-size: 3rem;"></i>
+                    <h2 class="mb-0">Informații Examen</h2>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="row mb-4 text-center">
+                        <div class="col-12">
+                            <div class="info-label">Materia</div>
+                            <div class="info-value" th:text="${examen.materie.nume}">Nume Materie</div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row g-4 mt-2">
+                        <div class="col-6 text-center">
+                            <div class="info-label"><i class="bi bi-clock"></i> Ora</div>
+                            <div class="info-value" th:text="${examen.ora}">10:00</div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="info-label"><i class="bi bi-calendar3"></i> Data</div>
+                            <div class="info-value" th:text="${#dates.format(examen.data, 'dd.MM.yyyy')}">20.01.2025</div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="info-label"><i class="bi bi-geo-alt"></i> Sala</div>
+                            <div class="info-value" th:text="${examen.sala.codSala}">A1</div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="info-label"><i class="bi bi-building"></i> Clădire</div>
+                            <div class="info-value" th:text="${examen.sala.cladire}">Corp A</div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="info-label"><i class="bi bi-layers"></i> Etaj</div>
+                            <div class="info-value" th:text="${examen.sala.etaj}">Etaj 2</div>
+                        </div>
+                        <div class="col-6 text-center">
+                            <div class="info-label"><i class="bi bi-info-circle"></i> Tip</div>
+                            <div class="info-value" th:text="${examen.tip}">Parțial/Final/Restanță</div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <a th:href="@{/dashboard}" class="btn btn-primary btn-lg px-5">
+                            <i class="bi bi-arrow-left"></i> Înapoi la Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
