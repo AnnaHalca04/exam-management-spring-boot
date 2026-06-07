@@ -115,5 +115,4 @@ The app runs on **http://localhost:8080**
 | API | None | REST endpoints |
 | Deployment | Local JAR | Web server |
 
----
 
