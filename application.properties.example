@@ -1,0 +1,2 @@
+spring.datasource.url=jdbc:sqlserver://localhost\\SQLEXPRESS:1433;databaseName=ExameneProiecte;integratedSecurity=true;trustServerCertificate=true;
+spring.datasource.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
