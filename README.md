@@ -117,6 +117,3 @@ The app runs on **http://localhost:8080**
 
 ---
 
-## Project Status
-
-Academic project — developed as part of the Advanced Java Web course at Politehnica University of Bucharest (2024–2025).
